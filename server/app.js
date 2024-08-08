@@ -25,9 +25,10 @@ const cookieParser = require('cookie-parser');
 
 //use the cors middleware
 app.use(cors({
-    origin : CLIENT_SITE_URL ,
-    credentials : true,
-}));
+    origin: 'http://localhost:5173',  // Allow only this origin
+    credentials: true                 // Allow cookies and authentication headers
+  }));
+
 
 // use the cookie-parser
 app.use(cookieParser());

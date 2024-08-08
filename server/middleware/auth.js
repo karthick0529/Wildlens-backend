@@ -23,9 +23,7 @@ const auth = {
                 // }
 
                 const decodedToken = jwt.verify(token, config.JWT_SECRET);
-
-                // //get the userId form the decoded Token
-                // // attached to the req object
+                //if the token is valid then get the user id from the token
                 req.userId = decodedToken.id;
 
                 //call the next middleware
