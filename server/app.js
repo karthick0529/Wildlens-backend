@@ -39,11 +39,11 @@ app.use(morgan("dev"))
 app.use(express.json());
 
 //define the endpoints
-app.use('/api/v1/users',userRouter);
-app.use('/api/v1/admin',adminRouter);
-app.use('/api/v1/bookings',bookingRouter);
-app.use('/api/v1/',reviewRouter);
-app.use('/api/v1/tours',tourPackageRouter);
+app.use('/api/users',userRouter);
+app.use('/api/admin',adminRouter);
+app.use('/api/bookings',bookingRouter);
+app.use('/api/',reviewRouter);
+app.use('/api/tours',tourPackageRouter);
 
 //export the app module
 module.exports = app;

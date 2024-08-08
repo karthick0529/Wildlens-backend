@@ -1,0 +1,122 @@
+[
+    {
+      "name": "Rainforest Expedition",
+      "description": "Discover the vibrant wildlife and lush vegetation of the Amazon Rainforest.",
+      "city": "Manaus",
+      "address": "101 Rainforest Way",
+      "distance": 200,
+      "photo": "https://tse3.mm.bing.net/th?id=OIP.JUNmrGYubmrXUNJWvSfkIAHaE8&pid=Api&P=0&h=180",
+      "maxGroupSize": 12,
+      "price": 500,
+      "isAvailable" : true,
+      "reviews": []
+    },
+    {
+      "name": "Desert Oasis",
+      "description": "An exotic journey through the vast dunes and hidden oases of the Sahara Desert.",
+      "city": "Marrakesh",
+      "address": "202 Oasis Lane",
+      "distance": 150,
+      "photo": "https://wallpaperaccess.com/full/457078.jpg",
+      "maxGroupSize": 8,
+      "price": 350,
+      "isAvailable" : true,
+      "reviews": []
+    },
+    {
+      "name": "Northern Lights Tour",
+      "description": "Experience the mesmerizing Aurora Borealis in the Arctic Circle.",
+      "city": "Reykjavik",
+      "address": "303 Aurora Blvd.",
+      "distance": 500,
+      "photo": "https://tse2.mm.bing.net/th?id=OIP.rlr7TP7Rj7w9w2DZ22p-xgHaES&pid=Api&P=0&h=180",
+      "maxGroupSize": 6,
+      "price": 600,
+      "isAvailable" : true,
+      "reviews": []
+    },
+    {
+      "name": "Island Hopping Adventure",
+      "description": "Explore the stunning archipelagos and crystal-clear waters of the Maldives.",
+      "city": "Male",
+      "address": "404 Island Road",
+      "distance": 30,
+      "photo": "https://tse3.mm.bing.net/th?id=OIP.7dPK-HYkctoM56iwr1SjFwHaE8&pid=Api&P=0&h=180",
+      "maxGroupSize": 15,
+      "price": 400,
+      "isAvailable" : true,
+      "reviews": []
+    },
+    {
+      "name": "Jungle Safari",
+      "description": "Get up close with exotic wildlife in the dense jungles of India.",
+      "city": "Ranthambore",
+      "address": "505 Jungle Path",
+      "distance": 70,
+      "photo": "https://tse1.mm.bing.net/th?id=OIP.PNR8RJeC4hXXW4n-823dowHaFL&pid=Api&P=0&h=180",
+      "maxGroupSize": 20,
+      "price": 450,
+      "isAvailable" : true,
+      "reviews": []
+    },
+    {
+      "name": "Cultural Heritage Tour",
+      "description": "Immerse yourself in the rich history and culture of ancient civilizations.",
+      "city": "Cairo",
+      "address": "606 Pyramid St.",
+      "distance": 80,
+      "photo": "https://tse3.mm.bing.net/th?id=OIP.54WDA6tcOvb-xW2u-BqxLQHaEK&pid=Api&P=0&h=180",
+      "maxGroupSize": 25,
+      "price": 250,
+      "isAvailable" : true,
+      "reviews": []
+    },
+    {
+      "name": "Mountain Trekking",
+      "description": "Challenge yourself with a thrilling trek through the Himalayas.",
+      "city": "Kathmandu",
+      "address": "707 Mountain Trail",
+      "distance": 100,
+      "photo": "https://tse4.mm.bing.net/th?id=OIP.YZCteTAv5UP5S4aciM_5kgHaDt&pid=Api&P=0&h=180",
+      "maxGroupSize": 10,
+      "price": 700,
+      "isAvailable" : true,
+      "reviews": []
+    },
+    {
+      "name": "Volcano Expedition",
+      "description": "Explore active volcanoes and lava fields on this adventurous tour.",
+      "city": "Hilo",
+      "address": "808 Lava Lane",
+      "distance": 60,
+      "photo": "https://tse4.mm.bing.net/th?id=OIP.pOn7y3nYpUa_8XBa_SI9mQHaF7&pid=Api&P=0&h=180",
+      "maxGroupSize": 12,
+      "price": 550,
+      "isAvailable" : true,
+      "reviews": []
+    },
+    {
+      "name": "Whale Watching",
+      "description": "Witness the majestic whales in their natural habitat in Alaska.",
+      "city": "Juneau",
+      "address": "909 Ocean Drive",
+      "distance": 40,
+      "photo": "https://tse3.mm.bing.net/th?id=OIP.NksiXZtYtNlrvoQnlqs6IwHaE8&pid=Api&P=0&h=180",
+      "maxGroupSize": 18,
+      "price": 300,
+      "isAvailable" : true,
+      "reviews": []
+    },
+    {
+      "name": "Wine Country Tour",
+      "description": "Enjoy a luxurious tour of the world-renowned vineyards and wineries.",
+      "city": "Napa Valley",
+      "address": "1010 Vineyard Way",
+      "distance": 20,
+      "photo": "https://tse4.mm.bing.net/th?id=OIP.jQa0ypWivHzSyD5OhPsSeQHaE8&pid=Api&P=0&h=180",
+      "maxGroupSize": 10,
+      "price": 200,
+      "isAvailable" : true,
+      "reviews": []
+    }
+]
