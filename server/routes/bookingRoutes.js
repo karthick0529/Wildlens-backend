@@ -1,18 +1,13 @@
-//import the express for router
-const express = require("express");
+// routes/bookingRoutes.js
 
-//import the bookingController
+const express = require('express');
+const router = express.Router();
 const bookingController = require('../controllers/bookingController');
-//import the auth
 const auth = require('../middleware/auth');
 
-//import the express router
-const bookingRouter = express.Router();
-//define the endpoints
-bookingRouter.post("/checkout-session/:id" , auth.isAuth , bookingController.getCheckoutSession)
-bookingRouter.get("/user" , auth.isAuth , bookingController.getUserBookings)
-bookingRouter.get("/" , auth.isAuth ,auth.isAdmin, bookingController.getAllBookings)
+router.post('/razorpay/:id', auth.isAuth, bookingController.getRazorpayOrder);
+router.get("/user" , auth.isAuth , bookingController.getUserBookings)
+router.get("/" , auth.isAuth ,auth.isAdmin, bookingController.getAllBookings)
+router.post('/razorpay/verify', auth.isAuth, bookingController.verifyRazorpayPayment);
 
-
-//export the module
-module.exports = bookingRouter;
+module.exports = router;

@@ -1,85 +1,76 @@
-// import Stripe from 'stripe'; 
-//import the booking module
 const Booking = require("../modules/bookings");
-
-//import the user module
 const User = require('../modules/users');
-
-//import the user module
 const TourPackage = require('../modules/tourPackages');
+const Razorpay = require("razorpay");
+// const razorpayInstance = require('../utils/razorpay');
+// const { RAZORPAY_KEY_ID } = require("../utils/razorpay");
+const { CLIENT_SITE_URL } = require("../utils/config");
+const crypto = require("crypto");
 
-const { STRIPE_SECRET_KEY, CLIENT_SITE_URL } = require("../utils/config");
+const razorpay = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET
+});
 
-
-const stripe = require("stripe")(STRIPE_SECRET_KEY);
-
-
-//define the booking Controller
 const bookingController = {
-    // define the createTour method
-    getCheckoutSession: async (req, res) => {
-        try {
 
+    // Method to get Razorpay payment order and initiate payment
+    getRazorpayOrder: async (req, res) => {
+        try {
             const tour = await TourPackage.findById(req.params.id);
             const user = await User.findById(req.userId);
-        
-            const { guestSize, phone, bookAt, fullName , companion} = req.body;
-            let companionFee=0;
-            if(companion==true) {
-              companionFee = 20;
-            } 
+
+            const { guestSize, phone, bookAt, fullName, companion } = req.body;
+            let companionFee = companion ? 20 : 0;
             const serviceFee = 10;
             const totalAmount = Number(tour.price) * Number(guestSize) + Number(serviceFee) + Number(companionFee);
             
-            const session = await stripe.checkout.sessions.create({
+            console.log(`Total Amount: ${totalAmount}`); // Log the total amount
 
-                payment_method_types: ['card'],
-                mode: 'payment',
-                success_url: `${CLIENT_SITE_URL}/checkout-success`,
-                cancel_url: `${CLIENT_SITE_URL}/tours`,
+            // Create a Razorpay order
+            const options = {
+                amount: totalAmount * 100, // Amount in paise
+                currency: "INR",
+                receipt: `receipt_${Date.now()}`,
+                payment_capture: 1 // Automatically capture the payment
+            };
 
-                // `${req.protocol}://${req.get('host')}/tours/${tour.id}`,
-                customer_email: user.email,
-                client_reference_id: req.params.id,
-                line_items: [
-                    {
-                        price_data: {
-                            currency: 'usd',
-                            unit_amount: totalAmount * 100,
-                            product_data: {
-                                name: tour.name,
-                                description: tour.description,
-                                
-                            }
-                        },
-                        quantity: 1
-                    }
+            console.log("Creating Razorpay order with options:", options); // Log order creation options
 
-                ],
-            })
+            const order = await razorpay.orders.create(options);
 
-           
+            console.log("Razorpay Order created:", order); // Log the created order
+
+            // Save booking details with the Razorpay order ID
             const newBooking = new Booking({
                 userId: req.userId,
                 userEmail: user.email,
                 tourName: tour.name,
                 fullName,
-                guestSize, phone, bookAt,
-                totalPrice:totalAmount,
+                guestSize,
+                phone,
+                bookAt,
+                totalPrice: totalAmount,
                 companion,
-                session: session.id
-            })
+                session: order.id
+            });
 
-            //save the new booking
             await newBooking.save();
 
-            //return a success message with saved user
-            res.status(200).json({ message: "Booked successfully", session });
+            res.status(200).json({
+                message: "Booking initiated successfully",
+                order,
+                key_id: razorpay.key_id,
+                bookingId: newBooking._id
+            });
 
+            console.log("New Booking:", newBooking); // Log the new booking
         } catch (error) {
-            res.status(500).json({ message: error.message })
+            console.error("Error in getRazorpayOrder:", error); // Log the error
+            res.status(500).json({ message: error.message });
         }
     },
+
     getUserBookings: async (req, res) => {
         try {
             // get the user id in req params
@@ -120,7 +111,45 @@ const bookingController = {
         }
     },
 
-}
+    verifyRazorpayPayment: async (req, res) => {
+        try {
+            const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+        
+            console.log("Verifying payment with:", {
+                razorpay_order_id,
+                razorpay_payment_id,
+                razorpay_signature
+            });
+        
+            const expectedSignature = crypto.createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+                .update(`${razorpay_order_id}|${razorpay_payment_id}`)
+                .digest("hex");
+        
+            console.log("Expected Signature:", expectedSignature);
+        
+            if (expectedSignature === razorpay_signature) {
+                const booking = await Booking.findOneAndUpdate(
+                    { session: razorpay_order_id },
+                    { paymentStatus: "Confirmed" },
+                    { new: true }
+                );
+        
+                if (!booking) {
+                    return res.status(404).json({ message: "Booking not found" });
+                }
+        
+                res.status(200).json({ message: "Payment verified successfully", booking });
+            } else {
+                console.log("Payment verification failed");
+                res.status(400).json({ message: "Payment verification failed" });
+            }
+        } catch (error) {
+            console.error("Error in verifyRazorpayPayment:", error);
+            res.status(500).json({ message: "Internal Server Error", error: error.message });
+        }
+    }
+     
+    
+};
 
-//export the module
 module.exports = bookingController;
