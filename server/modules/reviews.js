@@ -1,30 +1,34 @@
-//import the mongoose
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-//create the schema for reviews
 const reviewSchema = new mongoose.Schema({
     tourId: {
-        type :mongoose.Schema.Types.ObjectId,
-        ref : "TourPackage"
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'TourPackage',
+        required: true
+    },
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
     },
     userName: {
         type: String,
-        required: true,
-      },
-      reviewText: {
+        required: true
+    },
+    reviewText: {
         type: String,
-        required: true,
-      },
-      rating: {
+        required: true
+    },
+    rating: {
         type: Number,
         required: true,
-        min: 0,
-        max: 5,
-        default: 0,
-      },
+        min: 1,
+        max: 5
     },
-    { timestamps: true }
-  );
+    createdAt: {
+        type: Date,
+        default: Date.now
+    }
+});
 
-// export the mongoose module
-module.exports = mongoose.model("Review" , reviewSchema, "reviews");
+module.exports = mongoose.model('Review', reviewSchema);

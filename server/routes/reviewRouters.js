@@ -1,16 +1,12 @@
-//import the express for router
 const express = require('express');
-
-//import the review Controller 
 const reviewController = require('../controllers/reviewController');
-
-// import the auth 
 const auth = require('../middleware/auth');
 
 const reviewRouter = express.Router();
 
-reviewRouter.post("/review/:id", auth.isAuth , reviewController.addReview);
-reviewRouter.get("/reviews/:id", auth.isAuth , reviewController.getReview);
+reviewRouter.post('/review/:id', auth.isAuth, reviewController.addReview);
+reviewRouter.get('/reviews/:id', auth.isAuth, reviewController.getReviews);
+reviewRouter.put('/review/:id', auth.isAuth, reviewController.updateReview);
+reviewRouter.delete('/review/:id', auth.isAuth, reviewController.deleteReview);
 
-//export the module
 module.exports = reviewRouter;

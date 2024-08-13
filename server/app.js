@@ -43,7 +43,7 @@ app.use(express.json());
 app.use('/api/users',userRouter);
 app.use('/api/admin',adminRouter);
 app.use('/api/bookings',bookingRouter);
-app.use('/api/',reviewRouter);
+app.use('/api/reviews',reviewRouter);
 app.use('/api/tours',tourPackageRouter);
 
 //export the app module

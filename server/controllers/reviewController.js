@@ -1,63 +1,89 @@
-//import the booking module
 const Review = require('../modules/reviews');
+const TourPackage = require('../modules/tourPackages');
+const User = require('../modules/users');
 
-//import the booking module
-const TourPackage = require("../modules/tourPackages");
-
-//import the user module
-const User = require('../modules/users')
-
-//define the review Controller
 const reviewController = {
-    //define the add review method
-    addReview : async (req,res) => {
-
+    addReview: async (req, res) => {
         try {
-            
-            // get the tour id from the params
-            const tourId = req.params.id;
-
+            const { id: tourId } = req.params;
             const userId = req.userId;
-            
-            const user = await User.findById(userId).select('userName');
 
-      
-            const {reviewText, tourRating} = req.body;
+            const user = await User.findById(userId).select('userName');
+            const { reviewText, rating } = req.body;
 
             const newReview = new Review({
                 tourId,
-                userName:user.userName,
+                userId,
+                userName: user.userName,
                 reviewText,
-                rating:tourRating
-            })
+                rating
+            });
 
+            const savedReview = await newReview.save();
 
-        const savedReview = await newReview.save();
+            await TourPackage.findByIdAndUpdate(tourId, {
+                $push: { reviews: savedReview._id }
+            });
 
-            await TourPackage.findByIdAndUpdate(tourId,{
-                $push: {reviews: savedReview._id}
-            })
-
-        //return the success message
-        res.status(200).json({message : "review added Successfully",savedReview })
-       
-            } catch (error) {
-            res.status(500).json({ message: error.message })
+            res.status(200).json({ message: 'Review added successfully', savedReview });
+        } catch (error) {
+            res.status(500).json({ message: error.message });
         }
     },
-    getReview :  async (req,res) => {
-        try {
-            // get the tour id from the params
-            const tourId = req.params.id;
 
-            const reviews = await Review.find({tourId}).select("-__v ").sort({ date : -1 });
+    getReviews: async (req, res) => {
+        try {
+            const { id: tourId } = req.params;
+
+            const reviews = await Review.find({ tourId }).select('-__v').sort({ createdAt: -1 });
 
             res.status(200).json(reviews);
-
         } catch (error) {
-            res.status(500).json({ message: error.message })
-      }
+            res.status(500).json({ message: error.message });
+        }
     },
-}
-// export the module
+
+    updateReview: async (req, res) => {
+        try {
+            const { id: reviewId } = req.params;
+            const userId = req.userId;
+
+            const review = await Review.findOneAndUpdate(
+                { _id: reviewId, userId },
+                req.body,
+                { new: true }
+            );
+
+            if (!review) {
+                return res.status(404).json({ message: 'Review not found or unauthorized' });
+            }
+
+            res.status(200).json({ message: 'Review updated successfully', review });
+        } catch (error) {
+            res.status(500).json({ message: error.message });
+        }
+    },
+
+    deleteReview: async (req, res) => {
+        try {
+            const { id: reviewId } = req.params;
+            const userId = req.userId;
+
+            const review = await Review.findOneAndDelete({ _id: reviewId, userId });
+
+            if (!review) {
+                return res.status(404).json({ message: 'Review not found or unauthorized' });
+            }
+
+            await TourPackage.findByIdAndUpdate(review.tourId, {
+                $pull: { reviews: reviewId }
+            });
+
+            res.status(200).json({ message: 'Review deleted successfully' });
+        } catch (error) {
+            res.status(500).json({ message: error.message });
+        }
+    }
+};
+
 module.exports = reviewController;
