@@ -7,10 +7,20 @@ const reviewController = {
         try {
             const { id: tourId } = req.params;
             const userId = req.userId;
-
-            const user = await User.findById(userId).select('userName');
             const { reviewText, rating } = req.body;
 
+            // Check if reviewText and rating are provided
+            if (!reviewText || !rating) {
+                return res.status(400).json({ message: 'Review text and rating are required.' });
+            }
+
+            // Find user by ID
+            const user = await User.findById(userId).select('userName');
+            if (!user) {
+                return res.status(404).json({ message: 'User not found.' });
+            }
+
+            // Create new review
             const newReview = new Review({
                 tourId,
                 userId,
@@ -19,15 +29,18 @@ const reviewController = {
                 rating
             });
 
+            // Save review to database
             const savedReview = await newReview.save();
 
+            // Update the TourPackage with the new review
             await TourPackage.findByIdAndUpdate(tourId, {
                 $push: { reviews: savedReview._id }
             });
 
             res.status(200).json({ message: 'Review added successfully', savedReview });
         } catch (error) {
-            res.status(500).json({ message: error.message });
+            console.error(error);  // Log the error for debugging
+            res.status(500).json({ message: 'Internal Server Error' });
         }
     },
 
@@ -44,22 +57,32 @@ const reviewController = {
     },
 
     updateReview: async (req, res) => {
+        const reviewId = req.params.id;
+        const { reviewText, rating } = req.body;
+        
         try {
-            const { id: reviewId } = req.params;
-            const userId = req.userId;
-
-            const review = await Review.findOneAndUpdate(
-                { _id: reviewId, userId },
-                req.body,
-                { new: true }
-            );
-
-            if (!review) {
-                return res.status(404).json({ message: 'Review not found or unauthorized' });
+            // Check if reviewText and rating are provided
+            if (!reviewText || rating == null) { // Explicitly checking for null
+                return res.status(400).json({ message: "Review text and rating are required" });
             }
-
-            res.status(200).json({ message: 'Review updated successfully', review });
+            
+            // Find the review by ID
+            const review = await Review.findById(reviewId);
+            
+            if (!review) {
+                return res.status(404).json({ message: "Review not found" });
+            }
+            
+            // Update review fields
+            review.reviewText = reviewText;
+            review.rating = rating;
+            
+            // Save the updated review
+            await review.save();
+            
+            res.status(200).json({ message: "Review updated successfully", review });
         } catch (error) {
+            console.error("Error updating review:", error);
             res.status(500).json({ message: error.message });
         }
     },

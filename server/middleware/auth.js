@@ -1,64 +1,57 @@
 const jwt = require('jsonwebtoken');
-const config = require('../utils/config')
-const User = require('../modules/users')
+const config = require('../utils/config');
+const User = require('../modules/users');
 
 const auth = {
-    isAuth: async(req, res, next) => {
+    isAuth: async (req, res, next) => {
         try {
-            //get the token from req cookies
+            // Get the token from req cookies
             const token = req.cookies.token;
 
-            //if the token is not present , return a error message
+            // If the token is not present, return an error message
             if (!token) {
-                return res.status(400).json({ message: "Unauthorized" });
+                return res.status(401).json({ message: "Unauthorized: No token provided" });
             }
 
-            //if the token is present verify the token
+            // Verify the token
             try {
-                // jwt.verify(token, config.JWT_SECRET),(err,user)=>{
-                //     if(err){
-                //         return res.status(400).json({ message: "token is invalid" });
-                //     }
-                //     req.user = user
-                // }
-
                 const decodedToken = jwt.verify(token, config.JWT_SECRET);
-                //if the token is valid then get the user id from the token
-                req.userId = decodedToken.id;
+                req.userId = decodedToken.id; // Set userId in request object
 
-                //call the next middleware
+                // Call the next middleware
                 next();
-
             } catch (error) {
-                res.status(400).json({ message: "invalid token" });
+                res.status(401).json({ message: "Unauthorized: Invalid token" });
             }
         } catch (error) {
-            res.status(500).json({ message: error.message });
+            res.status(500).json({ message: "Internal Server Error" });
         }
     },
-    isAdmin : async (req,res, next) => {
+
+    isAdmin: async (req, res, next) => {
         try {
-            //get the user id from the req body
             const userId = req.userId;
 
-            //find the user by Id
+            // Find the user by ID
             const user = await User.findById(userId);
 
-            //if the user is not found then return a error message
-            if(!user) {
-                return res.status(400).json({ message: "User not found" });
+            // If the user is not found, return an error message
+            if (!user) {
+                return res.status(404).json({ message: "User not found" });
             }
-            //check if the user is admin and return the error message
-            if(user.role !== "admin") {
-                return res.status(400).json({ message: "Forbidden" });
+
+            // Check if the user is an admin
+            if (user.role !== "admin") {
+                return res.status(403).json({ message: "Forbidden: You are not an admin" });
             }
-            //if the user is an admin then call the next middleware
+
+            // If the user is an admin, call the next middleware
             next();
         } catch (error) {
-            res.status(500).json({ message: error.message });
+            res.status(500).json({ message: "Internal Server Error" });
         }
     }
-}
-   
-//export the auth middleware
+};
+
+// Export the auth middleware
 module.exports = auth;
