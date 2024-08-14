@@ -49,40 +49,6 @@ const bookingController = {
         }
     },
 
-    getUserBookings: async (req, res) => {
-        try {
-            const userId = req.userId;
-
-            // Ensure user exists
-            const user = await User.findById(userId);
-            if (!user) {
-                return res.status(404).json({ message: "User not found" });
-            }
-
-            const userBookings = await Booking.find({ userId }).select('-__v -phone');
-
-            res.status(200).json({ userBookings });
-        } catch (error) {
-            console.error("Error in getUserBookings:", error); // Log the error
-            res.status(500).json({ message: error.message });
-        }
-    },
-
-    getAllBookings: async (req, res) => {
-        try {
-            const bookings = await Booking.find().select("-__v");
-
-            if (!bookings || bookings.length === 0) {
-                return res.status(404).json({ message: "No bookings found" });
-            }
-
-            res.status(200).json({ bookings });
-        } catch (error) {
-            console.error("Error in getAllBookings:", error); // Log the error
-            res.status(500).json({ message: error.message });
-        }
-    },
-
     verifyRazorpayPayment: async (req, res) => {
         try {
             const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
@@ -106,7 +72,96 @@ const bookingController = {
         } catch (error) {
             res.status(500).json({ message: 'Error verifying payment', error: error.message });
         }
-    }
+    },
+
+    createUserBooking : async (req, res) => {
+        try {
+            const { userId, userEmail, tourId, tourName, fullName, guestSize, phone, bookAt, totalPrice } = req.body;
+    
+            // Validate user and tour IDs
+            if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(tourId)) {
+                return res.status(400).json({ message: 'Invalid user or tour ID format' });
+            }
+    
+            // Ensure user exists
+            const user = await User.findById(userId);
+            if (!user) {
+                return res.status(404).json({ message: "User not found" });
+            }
+    
+            // Ensure tour package exists
+            const tourPackage = await TourPackage.findById(tourId);
+            if (!tourPackage) {
+                return res.status(404).json({ message: "Tour package not found" });
+            }
+    
+            // Create a new booking document
+            const newBooking = new Booking({
+                userId: user._id,
+                userEmail: userEmail,
+                tourId: tourPackage._id, 
+                tourName: tourPackage.name, // Assuming `name` is a field in TourPackage
+                fullName: fullName,
+                guestSize: guestSize,
+                phone: phone,
+                bookAt: new Date(bookAt), // Ensure the date is correctly formatted
+                totalPrice: totalPrice,
+                companion: req.body.companion || false, // Optional field
+            });
+    
+            // Save the booking to the database
+            const savedBooking = await newBooking.save();
+    
+            res.status(201).json({
+                message: 'Booking created successfully',
+                booking: savedBooking,
+            });
+        } catch (error) {
+            console.error("Error in createUserBooking:", error); // Log the error
+            res.status(500).json({ message: 'Error creating booking', error: error.message });
+        }
+    },
+    
+    getUserBookings: async (req, res) => {
+        try {
+            const userId = req.userId;
+    
+            // Ensure user exists
+            const user = await User.findById(userId);
+            if (!user) {
+                return res.status(404).json({ message: "User not found" });
+            }
+    
+            const userBookings = await Booking.find({ userId })
+                .populate('tourId', 'name') // Populate tourId and select specific fields if needed
+                .exec();
+    
+            if (!userBookings || userBookings.length === 0) {
+                return res.status(404).json({ message: "No bookings found" });
+            }
+    
+            res.status(200).json({ userBookings });
+        } catch (error) {
+            console.error("Error in getUserBookings:", error);
+            res.status(500).json({ message: error.message });
+        }
+    },
+
+    getAllBookings: async (req, res) => {
+        try {
+            const bookings = await Booking.find().select("-__v");
+
+            if (!bookings || bookings.length === 0) {
+                return res.status(404).json({ message: "No bookings found" });
+            }
+
+            res.status(200).json({ bookings });
+        } catch (error) {
+            console.error("Error in getAllBookings:", error); // Log the error
+            res.status(500).json({ message: error.message });
+        }
+    },
+
 };
 
 module.exports = bookingController;
