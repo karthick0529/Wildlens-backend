@@ -49,6 +49,7 @@ const bookingController = {
         }
     },
 
+    // Method to verify Razorpay payment
     verifyRazorpayPayment: async (req, res) => {
         try {
             const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
@@ -59,7 +60,6 @@ const bookingController = {
             }
     
             // Verify the payment signature
-            // const crypto = require('crypto');
             const hmac = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET);
             hmac.update(razorpay_order_id + '|' + razorpay_payment_id);
             const generated_signature = hmac.digest('hex');
@@ -74,7 +74,8 @@ const bookingController = {
         }
     },
 
-    createUserBooking : async (req, res) => {
+    // Method to create a booking
+    createUserBooking: async (req, res) => {
         try {
             const { userId, userEmail, tourId, tourName, fullName, guestSize, phone, bookAt, totalPrice } = req.body;
     
@@ -122,6 +123,7 @@ const bookingController = {
         }
     },
     
+    // Method to get bookings for the authenticated user
     getUserBookings: async (req, res) => {
         try {
             const userId = req.userId;
@@ -147,18 +149,25 @@ const bookingController = {
         }
     },
 
+    // Method to get all bookings (Admin only)
     getAllBookings: async (req, res) => {
         try {
-            const bookings = await Booking.find().select("-__v");
-
+            // Fetch all bookings, excluding the __v field, and populate user and tour details
+            const bookings = await Booking.find()
+                .select("-__v")
+                .populate('userId', 'email fullName')
+                .populate('tourId', 'name');
+    
+            // Check if bookings are found
             if (!bookings || bookings.length === 0) {
                 return res.status(404).json({ message: "No bookings found" });
             }
-
+    
+            // Respond with the bookings
             res.status(200).json({ bookings });
         } catch (error) {
             console.error("Error in getAllBookings:", error); // Log the error
-            res.status(500).json({ message: error.message });
+            res.status(500).json({ message: 'Error fetching bookings', error: error.message });
         }
     },
 
