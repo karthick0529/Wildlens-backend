@@ -64,7 +64,7 @@ const config = require('./utils/config');
 const app = express();
 
 app.use(cors({
-    origin: 'http://localhost:5173',  // Allow only this origin
+    origin: 'https://capstone-wildlens-tour.netlify.app/',  // Allow only this origin
     credentials: true                 // Allow cookies and authentication headers
 }));
 
