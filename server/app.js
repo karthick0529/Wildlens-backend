@@ -63,10 +63,7 @@ const config = require('./utils/config');
 
 const app = express();
 
-app.use(cors({
-    origin: '*',  // Allow only this origin
-    credentials: true                 // Allow cookies and authentication headers
-}));
+app.use(cors());
 
 app.use(cookieParser());
 app.use(morgan("dev"));
