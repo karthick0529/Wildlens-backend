@@ -63,7 +63,10 @@ const config = require('./utils/config');
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:5173',  // Allow only this origin
+    credentials: true                 // Allow cookies and authentication headers
+}));
 
 app.use(cookieParser());
 app.use(morgan("dev"));
