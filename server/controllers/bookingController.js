@@ -107,7 +107,7 @@ const bookingController = {
                 phone: phone,
                 bookAt: new Date(bookAt), // Ensure the date is correctly formatted
                 totalPrice: totalPrice,
-                companion: req.body.companion || false, // Optional field
+                companion: req.body.companion || [], // Optional field
             });
     
             // Save the booking to the database

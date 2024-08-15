@@ -34,9 +34,8 @@ const bookingSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    companion: {
-        type: Boolean
-    }
+    companion: [String] // Array of strings if you're storing names
+
 }, { timestamps: true });
 
 module.exports = mongoose.model('Booking', bookingSchema, 'bookings');
