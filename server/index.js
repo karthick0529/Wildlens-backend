@@ -11,13 +11,13 @@ const app = require('./app')
 console.log("Connecting to MongoDb...")
 
 //Connect to MongoDB using mongoose
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5000;
 
 // Testing console
 console.log("process.env.PORT", process.env.PORT);
 
 app.listen(port, () => {
-    console.log(`Server is running on the port ${port}`);
-  });
-  
+  console.log(`Server is running on the port ${port}`);
+});
+
        
