@@ -64,7 +64,7 @@ const config = require('./utils/config');
 const app = express();
 
 app.use(cors({
-    origin: 'https://dainty-florentine-b9573f.netlify.app/',  // Allow only this origin
+    origin: '*',  // Allow only this origin
     credentials: true                 // Allow cookies and authentication headers
 }));
 
