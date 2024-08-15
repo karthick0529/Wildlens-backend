@@ -5,8 +5,9 @@ const User = require('../modules/users');
 const auth = {
     isAuth: async (req, res, next) => {
         try {
-            // Get the token from req cookies
-            const token = req.cookies.token;
+            // Get the token from the Authorization header
+            const authHeader = req.headers.authorization;
+            const token = authHeader && authHeader.split(' ')[1]; // Extract token from "Bearer <token>"
 
             // If the token is not present, return an error message
             if (!token) {

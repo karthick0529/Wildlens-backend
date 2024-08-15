@@ -1,114 +1,100 @@
-//import the user module
-const User = require('../modules/users')
+// Import the User model
+const User = require('../modules/users');
 
-//import the bcrypt library
-const bcrypt = require("bcrypt");
+// Import the bcrypt library
+const bcrypt = require('bcrypt');
 
-//import the jsonwebtoken
+// Import jsonwebtoken
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = require('../utils/config');
 
-//define the user Controller
+// Define the user Controller
 const userController = {
-    // define the register method
+    // Define the register method
     register: async (req, res) => {
         try {
-            // get the user input from the req body
-            const { userName, email,password,photo} = req.body;
+            // Get the user input from the req body
+            const { userName, email, password, photo } = req.body;
 
-            // check the username is already exists   
-            const user = await User.findOne({ email });
+            // Check if the user already exists
+            const existingUser = await User.findOne({ email });
 
-            // if the user exists, return a error message
-            if (user)
-                return res.status(400).json({ message: "User is already exists" })
+            // If the user exists, return an error message
+            if (existingUser) {
+                return res.status(400).json({ message: 'User already exists' });
+            }
 
-            //hash the password
+            // Hash the password
             const passwordHash = await bcrypt.hash(password, 10);
 
-            //create a new user
+            // Create a new user
             const newUser = new User({
                 userName,
                 email,
                 passwordHash,
-                photo
+                photo,
             });
 
-            // save the new user
+            // Save the new user
             const savedUser = await newUser.save();
 
-            //return a success message with saved user
-            res.status(200).json({ message: "User created successfully", savedUser });
+            // Return a success message with the saved user
+            res.status(201).json({ message: 'User created successfully', savedUser });
 
         } catch (error) {
             res.status(500).json({ message: error.message });
         }
     },
-    // define the register method
+
+    // Define the login method
     login: async (req, res) => {
         try {
-            //get the username and password from req body
-            const { email } = req.body;
+            // Get the email and password from req body
+            const { email, password } = req.body;
 
-            //check if the user is exits in database
+            // Check if the user exists in the database
             const user = await User.findOne({ email });
 
-            //if the user does not exists, return a error message
+            // If the user does not exist, return an error message
             if (!user) {
-                return res.status(404).json({ message: "User not found" })
+                return res.status(404).json({ message: 'User not found' });
             }
 
-            //if the user exists , compare the password and check if it is correct 
-            const isPasswordCorrect = await bcrypt.compare(req.body.password, user.passwordHash)
+            // Compare the password and check if it is correct
+            const isPasswordCorrect = await bcrypt.compare(password, user.passwordHash);
 
-            //if the password is incorrect return a error message
+            // If the password is incorrect, return an error message
             if (!isPasswordCorrect) {
-                return res.status(401).json({ message: "Incorrect password" })
+                return res.status(401).json({ message: 'Incorrect password' });
             }
-           
-            const {passwordHash,createdAt,updatedAt,__v,...rest} = user._doc;
 
-            /* if the password is correct and generate a token for the 
-            user and return it in the res along the success message */
+            // Generate a JWT token
             const token = jwt.sign({
-                email : user.email,
-                id:user._id,
-                userName : user.userName,
-            },JWT_SECRET);
+                email: user.email,
+                id: user._id,
+                userName: user.userName,
+            }, JWT_SECRET, { expiresIn: '24h' }); // Token expires in 24 hours
 
-            //set a cookie with the token
-            res.cookie('token' , token, {
-                httpOnly : true,
-                secure:true,
-                sameSite : 'none',
-                expires : new Date (Date.now() +24 * 60 * 60 * 1000) // 24h expiration
-            });
-
-            res.status(200).json({message : "Login successfully" ,token,data:{...rest}});
+            // Return a success message with the token
+            const { passwordHash, createdAt, updatedAt, __v, ...rest } = user._doc;
+            res.status(200).json({ message: 'Login successful', token, data: { ...rest } });
 
         } catch (error) {
             res.status(500).json({ message: error.message });
         }
     },
-    
-    //logout the user
-    logout: async(req,res) => {
+
+    // Logout the user
+    logout: (req, res) => {
         try {
-            //clear the token cookie
-            res.clearCookie('token',{
-                
-                    httpOnly: true,
-                    secure: true,       
-                    sameSite: 'none',
-            });
-            
-            //return a success message
-            res.status(200).json({ message : "logout successfully"});
+            // Return a success message and clear the token from client-side
+            res.status(200).json({ message: 'Logout successful', token: null });
 
         } catch (error) {
             res.status(500).json({ message: error.message });
         }
     },
-}
-// export the controller
+};
+
+// Export the controller
 module.exports = userController;
