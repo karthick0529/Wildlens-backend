@@ -11,15 +11,13 @@ const app = require('./app')
 console.log("Connecting to MongoDb...")
 
 //Connect to MongoDB using mongoose
-mongoose.connect(config.MongoDB_URI)
-        .then (()=>{
-             console.log("Connected To MongoDB...");
-              //start the server 
-        app.listen(config.PORT, ()=>{
-            console.log(`server running on Port ${config.PORT}`)
-        })
-        } ).catch ((error)=> {
-            console.log("Error connecting to MongoDB...",error.message)
-        })
+const port = process.env.PORT || 3000;
 
+// Testing console
+console.log("process.env.PORT", process.env.PORT);
+
+app.listen(port, () => {
+    console.log(`Server is running on the port ${port}`);
+  });
+  
        
