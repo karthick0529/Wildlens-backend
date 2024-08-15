@@ -3,6 +3,8 @@ const mongoose = require("mongoose");
 
 //import the config module
 const config = require('./utils/config');
+require('dotenv').config();
+
 
 //import the app module
 const app = require('./app')
