@@ -1,6 +1,5 @@
 //import the user module
 const User = require('../modules/users')
-
 //import the bcrypt library
 const bcrypt = require("bcrypt");
 
@@ -77,12 +76,12 @@ const userController = {
             },JWT_SECRET);
 
             //set a cookie with the token
-            res.cookie('token' , token, {
-                httpOnly : true,
-                secure:true,
-                sameSite : 'none',
-                expires : new Date (Date.now() +24 * 60 * 60 * 1000) // 24h expiration
-            });
+            // res.cookie('token' , token, {
+            //     httpOnly : true,
+            //     secure:true,
+            //     sameSite : 'none',
+            //     expires : new Date (Date.now() +24 * 60 * 60 * 1000) // 24h expiration
+            // });
 
             res.status(200).json({message : "Login successfully" ,token,data:{...rest}});
 

@@ -6,7 +6,7 @@ const auth = {
     isAuth: async (req, res, next) => {
         try {
             // Get the token from req cookies
-            const token = req.cookies.token;
+            const token = req.headers.token;
 
             // If the token is not present, return an error message
             if (!token) {
