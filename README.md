@@ -68,28 +68,33 @@ create a index.js file
         --import and create the dotenv file ----- npm install dotenv,
 
 then create the utils folder and create the config.js file,
+
     ---then import the dotenv package,
     ---Create all the necessary configuration variables,
     --using process.env.MONGODB_URI,like this,
     --and export the configuration variables,
 
 then come to the index.js and import the config module,
+
     --and connect the mongoose and start the server,
 
 to start the port and endpoints in app.js
-then create the app.js file 
+
+    then create the app.js file 
     ---and import the express js
     --create the express app
     --use the express json midlewares like-- app.use(express.json());
      --export the app module,
 
 then create the Modules folder and create the users.js file,
+
     --import the mongoose,
     --and Here create the mongoose schemas,
     --and export the mongoose.module,
     --and store like objects key value pair,
 
 then create the Controllers folder and create the usersController.js file,
+
     --import the user module,   
     --and Here create the usersController like objects key value pair,
     --define the methods 
@@ -101,15 +106,17 @@ then create the Controllers folder and create the usersController.js file,
     --to use bcrypt import the bcrypt package,
     --save the new user,
     --return a success message with saved user,    
-and export the usersController,
+    and export the usersController,
 
 then create the routes folder and create the usersroute.js file,
-import the usersController and express js,
+
+    import the usersController and express js,
     --and create the express Router to create express router require express,
     --define the endpoints,
-export the router.
+    export the router.
 
 the come to the app.js to define the endpoints 
+
     --define the endpoints
     --and to define the endpoints reuire the routes and import it,        
 
