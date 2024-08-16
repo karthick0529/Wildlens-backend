@@ -64,7 +64,7 @@ const config = require('./utils/config');
 const app = express();
 
 app.use(cors({
-    origin: 'https://comfy-boba-03818e.netlify.app', 
+    origin: 'https://unique-sorbet-9172d3.netlify.app', 
     // origin: 'http://localhost:5173', // Allow only this origin
     credentials: true                 // Allow cookies and authentication headers
 }));
