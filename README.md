@@ -58,13 +58,14 @@ Dependencies Used:
         razorpay
 
 create a index.js file
-    --npm init -y
-    --npm install
-    --import the mongoose module,
-    --Connect to MongoDB using mongoose,
-    --to connect mongoose need the MongoDB URI ,
-    --the URI will put in the dotenv file to secure the password,
-    --import and create the dotenv file ----- npm install dotenv,
+
+        --npm init -y
+        --npm install
+        --import the mongoose module,
+        --Connect to MongoDB using mongoose,
+        --to connect mongoose need the MongoDB URI ,
+        --the URI will put in the dotenv file to secure the password,
+        --import and create the dotenv file ----- npm install dotenv,
 
 then create the utils folder and create the config.js file,
     ---then import the dotenv package,
